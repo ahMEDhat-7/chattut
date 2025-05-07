@@ -79,12 +79,11 @@ export const logout = asyncWrapper(async (req, res, next) => {
 export const update = asyncWrapper(async (req, res, next) => {
   try {
     const { profilePic } = req.body;
-
     if (!profilePic) {
       return next(
         new CustomError("Please provide profilePic", 400, STATUS.FAIL)
       );
-    }
+    }    
     const uploadResponse = await cloudinary.uploader.upload(profilePic);
     const updatedUser = await User.findByIdAndUpdate(
       req.user._id,

@@ -63,6 +63,21 @@ export const useAuth = create((set)=>({
     } catch (error) {
       console.log("CHECK-AUTH-ERROR :", error);
     }
+  },
+  updatingProfile : async (data)=>{
+    try {
+      set({isUpdatingProfile: true});      
+      const res = await axiosInstance.patch('/auth/update-profile',data);
+      set({authUser:res.data});
+      toast.success("Profile Updated Successfully");
+
+    } catch (error) {
+
+      console.log("Upload IMG  :", error);
+      
+    }finally{
+      set({isUpdatingProfile:false});
+    }
   }
 
 }));
