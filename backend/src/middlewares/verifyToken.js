@@ -1,26 +1,43 @@
 import { User } from "../models/users.model.js";
 import { getPayload } from "../utils/genToken.js";
-import asyncWrapper from "./asyncWrapper.js";
+import { CustomError, STATUS } from "../utils/responseHelpers.js";
 
-
-export const verifyToken = asyncWrapper(async (req,res,next)=>{
+export const verifyToken = async (req, res, next) => {
   try {
     const token = req.cookies.token;
     if (!token) {
-      return next(new Error("Token Required - No token provided"));
+      return next(
+        new CustomError("Token Required - No token provided", 400, STATUS.FAIL)
+      );
     }
     const payload = getPayload(token);
-    if(!payload){
-      return next(new Error("Invalid Token - Token is invalid or expired"))
+    if (!payload) {
+      return next(
+        new CustomError(
+          "Invalid Token - Token is invalid or expired",
+          401,
+          STATUS.ERROR
+        )
+      );
     }
     const user = await User.findById(payload.id).select("-password");
-    if(!user){
-      return next(new Error("User Not Found - User does not exist"))
-      }
+    if (!user) {
+      return next(
+        new CustomError(
+          "User Not Found - User does not exist",
+          404,
+          STATUS.ERROR
+        )
+      );
+    }
 
     req.user = user;
     next();
   } catch (error) {
-    return next(new Error("unauthorized access"));
+    return new CustomError(
+      "Invalid Token - Token is invalid or expired",
+      401,
+      STATUS.ERROR
+    );
   }
-});
+};

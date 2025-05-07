@@ -7,19 +7,36 @@ import messageRoutes from "./routes/message.route.js";
 import { dbConnect } from "./lib/db.config.js";
 
 const app = express();
-app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
 
+app.use(
+  cors({
+    origin: process.env.ORIGIN_URL,
+    credentials: true,
+  })
+);
 app.use("/api/auth", authRoutes);
 app.use("/api/message", messageRoutes);
 
+app.use((err, req, res, next) => {
+  console.log({
+    status: err.statusText,
+    error: {
+      statusCode: err.statusCode,
+      message: err.message,
+    },
+  });
 
+  res.status(err.statusCode || 500).json({
+    status: err.statusText,
+    error: {
+      statusCode: err.statusCode,
+      message: err.message,
+    },
+  });
+});
 
-app.use((err,req,res,next)=>{
-  res.status(err.statusCode || 500).json({message:err.message});
-  next();
-})
 app.listen(process.env.PORT, () => {
   console.log(`Server is running on port ${process.env.PORT}`);
   dbConnect();
