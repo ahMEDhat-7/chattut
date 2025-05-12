@@ -35,7 +35,7 @@ function Profile() {
           <div className="flex flex-col items-center gap-4">
             <div className="relative">
               <img
-                src={selectedImg || authUser.profilePic || "/avatar.png"}
+                src={selectedImg || authUser.user.profilePic || "/avatar.png"}
                 alt="Profile"
                 className="size-32 rounded-full object-cover border-4 "
               />
@@ -68,7 +68,7 @@ function Profile() {
           </div>
 
           <div className="space-y-6">
-            <div className="space-y-1.5">
+            <div cla ssName="space-y-1.5 ">
               <div className="text-sm text-zinc-400 flex items-center gap-2">
                 <User className="w-4 h-4" />
                 Full Name

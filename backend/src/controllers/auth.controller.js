@@ -89,8 +89,8 @@ export const update = asyncWrapper(async (req, res, next) => {
       req.user._id,
       { profilePic: uploadResponse.secure_url },
       { new: true }
-    );
-    return res.status(200).json({ message: "user profile picture add" });
+    ).select("profilePic");
+    return res.status(200).json(updatedUser);
   } catch (error) {
     return next(new CustomError(error.message, 500, STATUS.ERROR));
   }
