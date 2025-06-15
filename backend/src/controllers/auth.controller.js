@@ -79,6 +79,8 @@ export const logout = asyncWrapper(async (req, res, next) => {
 export const update = asyncWrapper(async (req, res, next) => {
   try {
     const { profilePic } = req.body;
+    console.log(req.body);
+    
     if (!profilePic) {
       return next(
         new CustomError("Please provide profilePic", 400, STATUS.FAIL)
