@@ -7,8 +7,8 @@ import messageRoutes from "./routes/message.route.js";
 import { dbConnect } from "./lib/db.config.js";
 import bodyParser from "body-parser";
 import morgan from "morgan";
+import { app, server } from "./lib/socket.js";
 
-const app = express();
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 app.use(express.json());
@@ -42,7 +42,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.listen(process.env.PORT, () => {
+server.listen(process.env.PORT, () => {
   console.log(`Server is running on port ${process.env.PORT}`);
   dbConnect();
 });

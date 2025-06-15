@@ -2,6 +2,9 @@ import asyncWrapper from "../middlewares/asyncWrapper.js";
 import { User } from './../models/users.model.js';
 import { Message } from './../models/messages.model.js';
 import cloudinary from "../lib/cloudinary.js";
+import { CustomError,STATUS } from "../utils/responseHelpers.js";
+import { getReceiverSocketId, io } from "../lib/socket.js";
+
 
 
 
@@ -37,20 +40,26 @@ export const sendMessage = asyncWrapper(async (req, res, next) => {
   try {
     const { text, img } = req.body;
 
-    const userToChat = req.params.id;
-    const myId = req.user._id;
+    const receiverId = req.params.id;
+    
+    const senderId = req.user._id;
     let imgUrl = "";
     if (img) {
       const uplaodedImg = await cloudinary.uploader.upload(img);
       imgUrl = uplaodedImg.secure_url;
     }
-    const message = await Message.create({
-      senderId: myId,
-      receiverId: userToChat,
+    const newMessage = await Message.create({
+      senderId,
+      receiverId,
       text,
       img: imgUrl,
     });
-    return res.status(201).json(message);
+    const receiverSocketId = getReceiverSocketId(receiverId);
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("newMessage", newMessage);
+    }
+
+    return res.status(201).json(newMessage);
   } catch (error) {
     return next(new CustomError(error.message, 500, STATUS.ERROR));
   }
