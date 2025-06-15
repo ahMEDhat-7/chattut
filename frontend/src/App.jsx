@@ -1,18 +1,21 @@
-import { Navigate, Route, Routes } from 'react-router-dom';
-import NavBar from './components/NavBar';
-import Home from './pages/Home';
-import Signup from './pages/Signup';
-import Login from './pages/Login';
-import Profile from './pages/Profile';
-import { useAuth } from "./store/useAuth";
-import { useThemeStore } from "./store/useStoreTheme";
+import Navbar from "./components/NavBar";
+
+import HomePage from "./pages/HomePage";
+import SignUpPage from "./pages/SignUpPage";
+import LoginPage from "./pages/LoginPage";
+import SettingsPage from "./pages/SettingsPage";
+import ProfilePage from "./pages/ProfilePage";
+
+import { Routes, Route, Navigate } from "react-router-dom";
+import { useAuthStore } from "./store/useAuthStore";
+import { useThemeStore } from "./store/useThemeStore";
 import { useEffect } from "react";
 
 import { Loader } from "lucide-react";
 import { Toaster } from "react-hot-toast";
 
 const App = () => {
-  const { authUser, checkAuth, isCheckingAuth, onlineUsers } = useAuth();
+  const { authUser, checkAuth, isCheckingAuth, onlineUsers } = useAuthStore();
   const { theme } = useThemeStore();
 
   console.log({ onlineUsers });
@@ -29,33 +32,21 @@ const App = () => {
         <Loader className="size-10 animate-spin" />
       </div>
     );
+
   return (
     <div data-theme={theme}>
-      <NavBar />
+      <Navbar />
 
       <Routes>
-        <Route
-          path="/"
-          element={authUser ? <Home /> : <Navigate to={"/login"} />}
-        />
-        <Route
-          path="/signup"
-          element={!authUser ? <Signup /> : <Navigate to={"/"} />}
-        />
-        <Route
-          path="/login"
-          element={!authUser ? <Login /> : <Navigate to={"/"} />}
-        />
-        <Route
-          path="/profile"
-          element={authUser ? <Profile /> : <Navigate to={"/login"} />}
-        />
-        <Route path="*" element={<Navigate to="/" />} />
+        <Route path="/" element={authUser ? <HomePage /> : <Navigate to="/login" />} />
+        <Route path="/signup" element={!authUser ? <SignUpPage /> : <Navigate to="/" />} />
+        <Route path="/login" element={!authUser ? <LoginPage /> : <Navigate to="/" />} />
+        <Route path="/settings" element={<SettingsPage />} />
+        <Route path="/profile" element={authUser ? <ProfilePage /> : <Navigate to="/login" />} />
       </Routes>
+
       <Toaster />
     </div>
   );
-}
-
-export default App
-
+};
+export default App;
