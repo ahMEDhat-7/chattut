@@ -4,11 +4,24 @@
   "description": "**Chattut** is a modern real-time chat app.",
   "main": "src/index.js",
   "scripts": {
-    "build":"npm i --prefix backend && npm i --prefix frontend && npm run build --prefix frontend",
-    "start":"npm run start --prefix backend",
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
+  "dev:frontend": "cd frontend && npm run dev",
+  "dev:backend": "cd backend && npm run dev",
+
+  "build": "npm run build:frontend && npm run build:backend",
+  "build:frontend": "cd frontend && npm run build && shx cp -r dist/* ../backend/public/",
+  "build:backend": "cd backend && npm run build",
+
+  "start": "NODE_ENV=production node backend/dist/main.js"
+
   },
   "keywords": [],
   "author": "ahMEDhat",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^9.2.0",
+    "shx": "^0.4.0"
+  }
 }
+
+
