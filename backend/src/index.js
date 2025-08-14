@@ -13,28 +13,23 @@ import { app, server } from "./lib/socket.js";
 
 const __dirname = path.resolve();
 
-app.use(bodyParser.json({ limit: "50mb" }));
-app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 app.use(express.json());
 app.use(cookieParser());
-
-app.use(morgan("dev"));
 app.use(
   cors({
-    origin: process.env.ORIGIN_URL,
+    origin: "http://localhost:5173",
     credentials: true,
-    
   })
 );
+
 app.use("/api/auth", authRoutes);
-app.use("/api/message", messageRoutes);
+app.use("/api/messages", messageRoutes);
 
+if (process.env.NODE_ENV === "prod") {
+  app.use(express.static(path.join(__dirname, "../frontend/dist")));
 
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(join(__dirname, '../public')));
-
-  app.get('*', (req, res) => {
-    res.sendFile(join(__dirname, '../public/index.html'));
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
   });
 }
 
