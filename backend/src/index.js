@@ -6,8 +6,6 @@ import cookieParser from 'cookie-parser';
 import authRoutes from './routes/auth.route.js';
 import messageRoutes from "./routes/message.route.js";
 import { dbConnect } from "./lib/db.config.js";
-import bodyParser from "body-parser";
-import morgan from "morgan";
 import { app, server } from "./lib/socket.js";
 
 
@@ -17,7 +15,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: "*",
     credentials: true,
   })
 );
@@ -44,6 +42,6 @@ app.use((err, req, res, next) => {
 });
 
 server.listen(process.env.PORT, () => {
-  console.log(`Server is running on port ${process.env.PORT}`);
   dbConnect();
+  console.log(`Server is running on port ${process.env.PORT}`);
 });
