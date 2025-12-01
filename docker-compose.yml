@@ -1,0 +1,55 @@
+
+services:
+  db:
+    image: mongo:latest
+    container_name: mongodb
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: chattut
+    volumes:
+      - myVol:/data/db
+    networks:
+      - private-net
+    healthcheck:
+      test: ["CMD", "mongosh", "-u", "admin", "-p", "password", "--authenticationDatabase", "admin", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    container_name: chat_server
+    build: ./backend/
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - public-net
+      - private-net
+    ports:
+      - "5000:5000"
+    env_file:
+      - ./backend/.env 
+
+  frontend:
+    container_name: chat_client
+    build: ./frontend/
+    restart: always
+    depends_on:
+      - backend
+    networks:
+      - public-net
+    ports:
+      - "5173:5173"
+
+networks:
+  public-net:
+    driver: bridge
+  private-net:
+    driver: bridge
+    internal: true   # no internet access for DB
+
+volumes:
+  myVol:
