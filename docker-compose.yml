@@ -20,7 +20,8 @@ services:
 
   backend:
     container_name: chat_server
-    build: ./backend/
+    # build: ./backend/
+    image: ahmedhat7/chattut-backend:v1.0.0
     restart: always
     depends_on:
       db:
@@ -35,7 +36,8 @@ services:
 
   frontend:
     container_name: chat_client
-    build: ./frontend/
+    # build: ./frontend/
+    image: ahmedhat7/chattut-frontend:v1.0.0
     restart: always
     depends_on:
       - backend
